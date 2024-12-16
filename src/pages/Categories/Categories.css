@@ -1,0 +1,51 @@
+#categoryContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin: 20px auto;
+}
+
+.food-box {
+    cursor: pointer;
+    border: 1px solid white;
+    width: 18rem;
+    border-radius: 5px;
+    text-align: center;
+    position: relative;
+     
+    overflow: hidden;
+}
+
+.food-box img {
+    width: 100%;
+}
+
+.food-box p {
+    position: absolute;
+    font-size: 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    width: 100%;
+    padding: 10px;
+    bottom: 0;
+    left: 0;
+    margin: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.food-box:hover p {
+    opacity: 1;
+}
+
+@media (max-width:568px) {
+   
+    .food-box{
+        width: 9rem;
+    }
+    .food-box p{
+        font-size: 16px;
+    }
+}

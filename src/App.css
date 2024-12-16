@@ -1,0 +1,101 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,500;0,600;0,700;1,600;1,700&display=swap');
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body{
+    background-color: black;
+    color: white;
+    font-family: 'Open Sans', sans-serif;
+}
+section {
+    padding: 50px 30px;
+}
+section h2{
+    font-size: 35px;
+    margin-bottom: 20px;
+    text-align: center;
+    
+}
+
+#main {
+    height: 100vh;
+    position: relative;
+    padding: 20vh 10vh;
+    align-items: center;
+    /* overflow-y: auto; */
+}
+
+#main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('https://www.tastingtable.com/img/gallery/the-temperature-trick-for-cooking-multiple-dishes-together-in-your-oven/intro-1722529286.jpg');
+    background-position: center;
+    background-size: cover;
+    background-repeat: repeat-y;
+    opacity: 0.3;
+    z-index: 1;
+}
+
+#main > * {
+    position: relative;
+    z-index: 2; /* Ensure content stays above the background */
+}
+
+#main form{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 80%;
+    background-color: white;
+    border-radius: 30px;
+}
+#main button{
+    border: none;
+    outline: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background-color: white;
+    color: black;
+}
+#main input{
+    border: none;
+    width: 100%;
+    padding: 10px 20px;
+    outline: none;
+    font-size: 20px;
+    border-radius: 30px;
+    
+}
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    position: relative;
+   color: black;
+    padding: 10px 20px;
+    font-size: 20px;
+}
+
+#logo{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+#logo h2{
+    font-size: 20px;
+}
+
+@media (max-width:768px) {
+    #logo img{
+        display: none;
+    }
+}

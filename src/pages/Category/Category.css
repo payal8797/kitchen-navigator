@@ -1,0 +1,47 @@
+#mealContainer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.meal-box {
+    position: relative;
+    width: 250px;
+    border: 1px solid white;
+    padding: 10px;
+    margin: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.meal-box img {
+    width: 100%;
+    border-radius: 5px;
+}
+
+.meal-box a {
+
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    text-decoration: none;
+    background-color: white;
+    color: black;
+    font-size: 18px;
+    padding: 4px 8px;
+    border-radius: 5px;
+
+
+}
+
+.video-container {
+    width: 500px;
+}
+
+@media (max-width:568px) {
+    .meal-box {
+        width: 100%;
+    }
+}

@@ -1,0 +1,46 @@
+#single-meal{
+    min-height: 100vh;
+   
+    
+}
+.video-container{
+    width: 100%;
+    
+}
+
+.info{
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    
+}
+
+#single-meal h3{
+    margin: 20px 0px;
+    font-size: 23px;
+}
+
+.ingredients ul{
+    
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.ingredients li{
+    background-color: white;
+    color: black;
+    font-size: 18px;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+
+@media (min-width:768px) {
+    .container{
+        width: 90%;
+        margin: auto;
+    }
+}
