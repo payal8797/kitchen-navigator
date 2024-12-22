@@ -38,3 +38,5 @@ Navigate recipes by categories like desserts, vegan, vegetarian and many more fo
 - React Player: React component for playing YouTube videos.
 - The Meal Database API: Provides recipe data for the app.
 - ANTD - For UI components
+
+## Checkout here: https://kitchen-navigator.netlify.app/
