@@ -6,131 +6,112 @@ import PropTypes from 'prop-types';
 
 
 
-const AllRecipes = ( {filterByIngredients, filterByAreas, selectedIngredients = [], selectedAreas=[]} ) => {  
-  const [recipes, setRecipes] = useState([]);  
-  const [loading, setLoading] = useState(true);  
-  const [currentPage, setCurrentPage] = useState(1);  
-  const recipesPerPage = 10;  
-  const totalRecipes = recipes.length;  
-  const indexOfLastRecipe = currentPage * recipesPerPage;  
-  const indexOfFirstRecipe = indexOfLastRecipe - recipesPerPage;  
-  const currentRecipes = recipes.slice(indexOfFirstRecipe, indexOfLastRecipe);  
+const AllRecipes = ({ filterByIngredients, filterByAreas, selectedIngredients = [], selectedAreas = [] }) => {
+  const [recipes, setRecipes] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const recipesPerPage = 10;
 
-  const onPageChange = (page) => {  
-    setCurrentPage(page);  
-  };   
+  const fetchRecipesByLetter = async (letter) => {
+    try {
+      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);
+      return response.data.meals || [];
+    } catch (err) {
+      console.error(`Error fetching recipes for letter ${letter}:`, err);
+      return [];
+    }
+  };
 
-  const fetchRecipesByLetter = async (letter) => {  
-    try {  
-      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/search.php?f=${letter}`);  
-      return response.data.meals || [];  
-    } catch (err) {  
-      console.error(`Error fetching recipes for letter ${letter}:`, err);  
-      return [];   
-    }  
-  };  
+  const fetchRecipesByIngredient = async (ingredient) => {
+    try {
+      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`);
+      return response.data.meals || [];
+    } catch (err) {
+      console.error(`Error fetching recipes for ingredient ${ingredient}:`, err);
+      return [];
+    }
+  };
 
-  const fetchRecipesByIngredient = async (ingredient) => {  
-    try {  
-      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/filter.php?i=${ingredient}`);  
-      return response.data.meals || [];  
-    } catch (err) {  
-      console.error(`Error fetching recipes for ingredient ${ingredient}:`, err);  
-      return [];   
-    }  
-  };  
+  const fetchRecipesByArea = async (area) => {
+    try {
+      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${area}`);
+      return response.data.meals || [];
+    } catch (err) {
+      console.error(`Error fetching recipes for area ${area}:`, err);
+      return [];
+    }
+  };
 
-  const fetchRecipesByArea = async (area) => {  
-    try {  
-      const response = await axios.get(`https://www.themealdb.com/api/json/v1/1/filter.php?a=${area}`);  
-      return response.data.meals || [];  
-    } catch (err) {  
-      console.error(`Error fetching recipes for area ${area}:`, err);  
-      return [];   
-    }  
-  };  
+  const fetchAllRecipes = async () => {
+    const allRecipes = [];
+    for (let charCode = 97; charCode <= 122; charCode++) {
+      const letter = String.fromCharCode(charCode);
+      const recipesForLetter = await fetchRecipesByLetter(letter);
+      allRecipes.push(...recipesForLetter);
+    }
+    return allRecipes;
+  };
 
-  const fetchAllRecipes = async () => {  
-    const allRecipes = [];  
-    for (let charCode = 97; charCode <= 122; charCode++) {   
-      const letter = String.fromCharCode(charCode);  
-      const recipesForLetter = await fetchRecipesByLetter(letter);  
-      allRecipes.push(...recipesForLetter);  
-    }  
-    return allRecipes;  
-  };  
+  useEffect(() => {
+    const fetchRecipes = async () => {
+      setLoading(true);
+      let fetchedRecipes = new Set();
 
-  const fetchRecipesByIngredients = async () => {  
-    const fetchedRecipes = [];  
-    const recipesByIngredient = await Promise.all(  
-      selectedIngredients?.map(fetchRecipesByIngredient)  
-    );  
-    recipesByIngredient.forEach((recipes) => {  
-      fetchedRecipes.push(...recipes);   
-    });  
+      if (!filterByIngredients && !filterByAreas) {
+        // Fetch all recipes if no filters are applied
+        const allRecipes = await fetchAllRecipes();
+        fetchedRecipes = new Set(allRecipes);
+      } else {
+        // Fetch recipes based on selected filters
+        if (filterByAreas && selectedAreas.length > 0) {
+          const recipesByArea = await Promise.all(selectedAreas.map(fetchRecipesByArea));
+          recipesByArea.forEach((recipes) => recipes.forEach((recipe) => fetchedRecipes.add(recipe)));
+        }
 
-    return fetchedRecipes;  
-  };  
+        if (filterByIngredients && selectedIngredients.length > 0) {
+          const recipesByIngredient = await Promise.all(selectedIngredients.map(fetchRecipesByIngredient));
+          recipesByIngredient.forEach((recipes) => recipes.forEach((recipe) => fetchedRecipes.add(recipe)));
+        }
+      }
 
-  const fetchRecipesByAreas = async () => {  
-    const fetchedRecipes = [];  
-    const recipesByArea = await Promise.all( 
-      selectedAreas?.map(fetchRecipesByArea)  
-    );  
-    recipesByArea.forEach((recipes) => {  
-      fetchedRecipes.push(...recipes);   
-    });  
-    return fetchedRecipes;  
-  };  
+      // Convert Set back to array
+      setRecipes(Array.from(fetchedRecipes));
+      setLoading(false);
+    };
 
-  useEffect(() => {  
-    const fetchRecipes = async () => {  
-      setLoading(true);  
-      let allRecipes = [];
+    fetchRecipes();
+  }, [filterByIngredients, filterByAreas, selectedIngredients, selectedAreas]);
 
-      if (!filterByIngredients && !filterByAreas) {  
-        allRecipes = await fetchAllRecipes();  
-      } 
-      else {  
-        if (filterByAreas) { 
-          const recipesByArea = await fetchRecipesByAreas();  
-          allRecipes.push(...recipesByArea);  
-        }  
-        if (filterByIngredients) {  
-          const recipesByIngredient = await fetchRecipesByIngredients();  
-          allRecipes.push(...recipesByIngredient);  
-        }  
-      }  
-      setRecipes(allRecipes);  
-      setLoading(false);  
-    };  
+  const currentRecipes = recipes.slice(
+    (currentPage - 1) * recipesPerPage,
+    currentPage * recipesPerPage
+  );
 
-    fetchRecipes();  
-  }, [filterByIngredients, filterByAreas, selectedIngredients, selectedAreas]);   
+  const onPageChange = (page) => {
+    setCurrentPage(page);
+  };
 
-  return (  
-    <>  
-
-      <div id='mealContainer'>  
-      {loading && <div><Spin size='large'/></div>}   
-        {currentRecipes.map((meal) => (  
-          <MealBox key={meal.idMeal} meal={meal} />  
-        ))}  
-      </div> 
-      <br/> 
-      <div id='mealContainer'> 
-        
-        <Pagination  
-          current={currentPage}  
-          pageSize={recipesPerPage}  
-          total={totalRecipes}  
-          onChange={onPageChange}  
-          showSizeChanger={false}  
-        />   
-      </div>  
-    </>   
-  );  
-};  
+  return (
+    <>
+      <div id="mealContainer">
+        {loading && <div><Spin size="large" /></div>}
+        {!loading && currentRecipes.map((meal) => (
+          <MealBox key={meal.idMeal} meal={meal} />
+        ))}
+      </div>
+      <br />
+      <div id="mealContainer">
+        <Pagination
+          current={currentPage}
+          pageSize={recipesPerPage}
+          total={recipes.length}
+          onChange={onPageChange}
+          showSizeChanger={false}
+        />
+      </div>
+    </>
+  );
+};
 AllRecipes.propTypes = {  
   filterByIngredients: PropTypes.bool.isRequired,
   filterByAreas: PropTypes.bool.isRequired, 

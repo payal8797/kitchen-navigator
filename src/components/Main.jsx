@@ -13,8 +13,6 @@ const Main = () => {
     const [allIngredients, setAllIngredients] = useState([]);  
     const [selectedAreas, setSelectedAreas] = useState([]);  
     const [selectedIngredients, setSelectedIngredients] = useState([]);  
-    const [filterByIngredients, setFilterByIngredients] = useState(false);  
-    const [filterByAreas, setFilterByAreas] = useState(false);  
     const navigate = useNavigate()
     useEffect(() => {  
       const fetchAreas = async () => {  
@@ -38,13 +36,6 @@ const Main = () => {
             console.error('Error fetching areas:', error);  
         }  
       };  
-
-      if(selectedIngredients.length>0){
-        setFilterByIngredients(true);
-      }
-      if(selectedAreas.length>0){
-        setFilterByAreas(true);
-      }
 
       fetchIngredients();  
 
@@ -90,8 +81,8 @@ const Main = () => {
           </Select>
 
           <AllRecipes 
-            filterByIngredients={filterByIngredients} 
-            filterByAreas={filterByAreas} 
+            filterByIngredients={selectedIngredients.length > 0} 
+            filterByAreas={selectedAreas.length > 0} 
             selectedIngredients={selectedIngredients}
             selectedAreas={selectedAreas} 
           />
